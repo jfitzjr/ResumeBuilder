@@ -13,17 +13,14 @@ BEFORE_NAME = r"""\documentclass{article}
     \Huge """
 
 BETWEEN_LINKS = "}\ \ "
+BEFORE_LINK = r"\href{https://"
+BEFORE_EMAIL = r"\\ \href{mailto:"
+BEFORE_PHONE = r"\href{tel:+"
+BEFORE_CATEGORY_NAME = r"\noindent{\Large "
+AFTER_CATEGORY_NAME = r"""}\\[-0.6em]
+\vspace{2pt}
+\noindent\rule{\textwidth}{1pt}"""
 
-BEFORE_LINKEDIN = r"""\end{center}
-\href{https://"""
-
-BEFORE_GITHUB = r"""\href{https://"""
-
-BEFORE_LINK = r"""\href{https://"""
-
-BEFORE_EMAIL = r"""\\ \href{mailto:"""
-
-BEFORE_PHONE = r"""\href{tel:+"""
 
 def getWebsites():
     while True:
@@ -37,27 +34,29 @@ def getBulletPoints():
         otherBulletPoints = input("Any bullet points to add? (Leave blank if there are no bullet points): ")
         if not otherBulletPoints:
             return
-        yield getBulletPoints
+        yield otherBulletPoints
 
 def getSubCategories():
     while True:
-        otherSubCategories = input("Any subcategories to add? (Leave blank if there are no more subcategories): ")
-        if not otherSubCategories:
+        subCategoryName = input("Any subcategories to add? (Leave blank if there are no more subcategories): ")
+        if not subCategoryName:
             return
         
+        subCategoryDate = input("What's the timeframe for this subcategory? (Leave blank if N/A): ")
+
         # call bullet points
-        otherSubCategories = list(getBulletPoints())
-        yield otherSubCategories
+        bulletsPoints = list(getBulletPoints())
+        yield [subCategoryName, bulletsPoints, subCategoryDate]
 
 def getCategories():
     while True:
-        otherCategories = input("Any categories to add? (Leave blank if there are no more categories): ")
-        if not otherCategories:
+        categoryName = input("Any categories to add? (Leave blank if there are no more categories): ")
+        if not categoryName:
             return
         
         # call subcategories
-        otherCategories = list(getSubCategories())
-        yield otherCategories
+        subCategories = list(getSubCategories())
+        yield [categoryName, subCategories]
 
 def buildTexFile(name, linkedin, github, email, phone, otherWebsites=[], categories=[]):
     global BEFORE_NAME
@@ -72,8 +71,29 @@ def buildTexFile(name, linkedin, github, email, phone, otherWebsites=[], categor
         resumeTex += BEFORE_LINK + website + r"/}{\faGlobe\ " + website + BETWEEN_LINKS
 
     resumeTex += BEFORE_EMAIL + email + r"}{\faEnvelope\ " + email + BETWEEN_LINKS
-    resumeTex += BEFORE_PHONE + phone + r"}{\faPhone\ +" + phone + "} \\"
+    resumeTex += BEFORE_PHONE + phone + r"}{\faPhone\ +" + phone + r"""} \\
+        
+"""
 
+    for category in categories:
+        resumeTex += BEFORE_CATEGORY_NAME + category[0] + AFTER_CATEGORY_NAME + '\n'
+
+        for subCategory in category[1]:
+            resumeTex += "\large " + subCategory[0]
+            if subCategory[2]:
+                resumeTex += " \hfill " + subCategory[2]
+
+            if not subCategory[1]:
+                resumeTex += " \\\\\n"
+                continue
+            
+            resumeTex += "\n"
+            resumeTex += r"\vspace{2pt}" + '\n' + r"\normalsize" + '\n' + r"\begin{itemize}[noitemsep, topsep=0pt, leftmargin=*]" + '\n'
+            for bulletPoint in subCategory[1]:
+                resumeTex += r"    \item " + bulletPoint + '\n'
+            resumeTex += r"\end{itemize}" + '\n' + r"\vspace{2pt}"
+
+        resumeTex += '\n\n' + r"\vspace{10pt}" + '\n'
 
     resumeTex = resumeTex + '\n' + r"\end{document}"
     print(resumeTex)
@@ -84,9 +104,8 @@ if __name__ == "__main__":
     github = input("What's your Github link?: ")
     email = input("What's your Email?: ")
     phone = input("What's your Phone Number (Ex: 11234567890)?: ")
-    print()
 
-    otherWebsites = getWebsites()
-    #categories = list(getCategories())
-
-    buildTexFile(name, linkedin, github, email, phone, otherWebsites)
+    otherWebsites = list(getWebsites())
+    categories = list(getCategories())
+    
+    buildTexFile(name, linkedin, github, email, phone, otherWebsites, categories)
