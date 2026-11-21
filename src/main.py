@@ -8,18 +8,30 @@ def getWebsites():
 
 def getBulletPoints():
     while True:
-        # TODO
-        pass
+        otherBulletPoints = input("Any bullet points to add? (Leave blank if there are no bullet points): ")
+        if not otherBulletPoints:
+            return
+        yield getBulletPoints
 
 def getSubCategories():
     while True:
-        # TODO 
-        pass
+        otherSubCategories = input("Any subcategories to add? (Leave blank if there are no more subcategories): ")
+        if not otherSubCategories:
+            return
+        
+        # call bullet points
+        otherSubCategories = list(getBulletPoints())
+        yield otherSubCategories
 
 def getCategories():
     while True:
-        # TODO
-        pass
+        otherCategories = input("Any categories to add? (Leave blank if there are no more categories): ")
+        if not otherCategories:
+            return
+        
+        # call subcategories
+        otherCategories = list(getSubCategories())
+        yield otherCategories
 
 def buildTexFile(name, linkedin, email, phone, otherWebsites, categories):
     # TODO
