@@ -1,4 +1,6 @@
-# TeX uses curly braces so rip f strings
+from pathlib import Path
+import requests
+
 BEFORE_NAME = r"""\documentclass{article}
 \usepackage{fontawesome5}
 \usepackage[margin=1in]{geometry}
@@ -44,7 +46,6 @@ def getSubCategories():
         
         subCategoryDate = input("What's the timeframe for this subcategory? (Leave blank if N/A): ")
 
-        # call bullet points
         bulletsPoints = list(getBulletPoints())
         yield [subCategoryName, bulletsPoints, subCategoryDate]
 
@@ -53,25 +54,29 @@ def getCategories():
         categoryName = input("Any categories to add? (Leave blank if there are no more categories): ")
         if not categoryName:
             return
-        
-        # call subcategories
+
         subCategories = list(getSubCategories())
         yield [categoryName, subCategories]
 
-def buildTexFile(name, linkedin, github, email, phone, otherWebsites=[], categories=[]):
+def buildTexFile(name, linkedin, github, email, phone, otherWebsites, categories):
     global BEFORE_NAME
     global BEFORE_LINKEDIN
     
     resumeTex = BEFORE_NAME + name + '\n' + r"""\end{center}
 """
-    resumeTex += BEFORE_LINK + linkedin + r"/}{\faLinkedin\ " + linkedin + BETWEEN_LINKS
-    resumeTex += BEFORE_LINK + github + r"/}{\faGithub\ " + github + BETWEEN_LINKS
+    if linkedin:
+        resumeTex += BEFORE_LINK + linkedin + r"/}{\faLinkedin\ " + linkedin + BETWEEN_LINKS
+    if github:
+        resumeTex += BEFORE_LINK + github + r"/}{\faGithub\ " + github + BETWEEN_LINKS
 
     for website in otherWebsites:
         resumeTex += BEFORE_LINK + website + r"/}{\faGlobe\ " + website + BETWEEN_LINKS
 
-    resumeTex += BEFORE_EMAIL + email + r"}{\faEnvelope\ " + email + BETWEEN_LINKS
-    resumeTex += BEFORE_PHONE + phone + r"}{\faPhone\ +" + phone + r"""} \\
+    if email:
+        resumeTex += BEFORE_EMAIL + email + r"}{\faEnvelope\ " + email + BETWEEN_LINKS
+    if phone:
+        resumeTex += BEFORE_PHONE + phone + r"}{\faPhone\ " + phone
+    resumeTex += r"""} \\
         
 """
 
@@ -96,16 +101,26 @@ def buildTexFile(name, linkedin, github, email, phone, otherWebsites=[], categor
         resumeTex += '\n\n' + r"\vspace{10pt}" + '\n'
 
     resumeTex = resumeTex + '\n' + r"\end{document}"
-    print(resumeTex)
+    
+    return resumeTex
 
 if __name__ == "__main__":
-    name = input("What's your name?: ")
+    name = ""
+    while not name:
+        name = input("What's your name?: ")
     linkedin = input("What's your LinkedIn link?: ")
     github = input("What's your Github link?: ")
     email = input("What's your Email?: ")
     phone = input("What's your Phone Number (Ex: 11234567890)?: ")
-
     otherWebsites = list(getWebsites())
     categories = list(getCategories())
     
-    buildTexFile(name, linkedin, github, email, phone, otherWebsites, categories)
+    resumeTex = buildTexFile(name, linkedin, github, email, phone, otherWebsites, categories)
+
+    root = Path(__file__).resolve().parent.parent
+    outputPath = root / "build"
+    outputPath.mkdir(parents=True, exist_ok=True)
+    pdfPath = outputPath / "resume.pdf"
+
+    with open(outputPath / "resume.tex", "w", encoding='utf-8') as file:
+        file.write(resumeTex)
