@@ -1,29 +1,69 @@
-# ResumeBuilder
+# ResumeBuilder app
 
-Submission for Temple University, Japan Campus' 2026 Hackathon, ResumeBuilder is a quick and easy way to display your skills in a nicely formatted PDF file using LaTeX. Python as a backend and Flet as a front end.
+## Run the app
 
-## Libraries
-Dependencies for ResumeBuilder are pathlib, requests, and flutter. For the created TeX file, fontawesome5, geometry, hyperref, and enumitem is used for styling.
+### uv
 
-## Usage
-Input the relevant information you want displayed on your resume in the text boxes, and hit submit. The Program will automatically generate a .tex file, which can be used to compile to a PDF file via an external source like Overleaf.
+Run as a desktop app:
 
-## Installation
-For executables, refer to the Releases page.
+```bash
+uv run flet run
+```
 
-For running using Python, clone this repository.
+Run as a web app:
+
+```bash
+uv run flet run --web
 ```
-git clone https://github.com/jfitzjr/ResumeBuilder.git
+
+For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/).
+
+## Build the app
+
+### Android
+
+```bash
+flet build apk -v
 ```
-Change into the repository's directory.
+
+For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
+
+### iOS
+
+```bash
+flet build ipa -v
 ```
-cd ResumeBuilder
+
+For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
+
+### macOS
+
+```bash
+flet build macos -v
 ```
-Install missing dependencies requests and flutter.
+
+For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
+
+### Linux
+
+```bash
+flet build linux -v
 ```
-pip install requests flet
+
+For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
+
+### Windows
+
+```bash
+flet build windows -v
 ```
-Run main.py
+
+For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+
+### Web
+
+```bash
+flet build web -v
 ```
-python src/main.py
-```
+
+For more details on building Web app, refer to the [Web Packaging Guide](https://flet.dev/docs/publish/web/).
