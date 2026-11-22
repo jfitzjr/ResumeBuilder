@@ -118,6 +118,7 @@ async def get_downloads_dir() -> Path:
     return downloads_dir
 
 def main(page: ft.Page):
+    page.window.icon = "icon.png"
     page.title = "ResumeBuilder"
     page.scroll = ft.ScrollMode.AUTO
     output_text = ft.Text()
