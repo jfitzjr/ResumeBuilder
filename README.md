@@ -1,5 +1,6 @@
 
 # ResumeBuilder
+<img src="src/assets/icon.png" alt="Icon" style="width:200px;"/>
 
 Submission for Temple University, Japan Campus' 2026 Hackathon, ResumeBuilder is a quick and easy way to display your skills in a nicely formatted PDF file using LaTeX. Python as a backend and Flet as a front end.
 
