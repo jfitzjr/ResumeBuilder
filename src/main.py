@@ -124,3 +124,5 @@ if __name__ == "__main__":
 
     with open(outputPath / "resume.tex", "w", encoding='utf-8') as file:
         file.write(resumeTex)
+
+    print("TeX file created in /build/!")
