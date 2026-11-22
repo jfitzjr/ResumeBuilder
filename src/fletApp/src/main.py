@@ -5,27 +5,70 @@ def main(page: ft.Page):
     page.title = "ResumeBuilder"
     linkFields: list[ft.TextField] = []
     linkFieldColumn = ft.Column()
-    output_text = ft.Text()
+    #output_text = ft.Text()
     
+    categoryFields: list[ft.TextField] = []
+    categoryFieldColumn = ft.Column()
+
+    
+    
+
     #Functions
     def addLinkField(e):
-        field = ft.TextField(label=f"Link {len(linkFields) + 1}")
+        field = ft.TextField(label=f"Link {len(linkFields) + 1}", hint_text=f"example{len(linkFields) + 1}.com")
         linkFields.append(field)
         linkFieldColumn.controls.append(field)
         page.update()
 
     def removeLinkField(e):
         lastField = len(linkFields) - 1
-        linkFields.pop(lastField)
-        linkFieldColumn.controls.pop(lastField)
+        if lastField >= 0:
+            linkFields.pop(lastField)
+            linkFieldColumn.controls.pop(lastField)
         page.update()
 
-    def addCategory():
-        TODO
-    def addSubCategory():
-        TODO
+    def addCategoryField(e):
+        field = ft.TextField(label=f"Category {len(categoryFields) + 1}")
+
+        #Make a separate list with the field container and the list of the subcontainer
+        fieldContainer:list[ft.TextField] = []
+        fieldContainer.append(field)
+
+        columnContainer = ft.Column()
+        columnContainer.controls.append(field)
+
+        #Makes subcategory fields first
+        subcategoryFields: list[ft.TextField] = []
+        fieldContainer.append(subcategoryFields)
+
+        subcategoryFieldColumn = ft.Column(controls=[
+            ft.Row(subcategoryFields),
+            ft.Row(
+                controls=[
+                    ft.Text("Add subcategory"),
+                    ft.Button(content="+", on_click=addSubCategoryField),
+                    ft.Button(content="-", on_click=removeCategoryField)
+                ]
+            )
+        ])
+
+        # Then append it to the column container
+        columnContainer.controls.append(subcategoryFieldColumn)
+        categoryFields.append(fieldContainer)
+        categoryFieldColumn.controls.append(columnContainer)
+
+        page.update()
     
-    def addBulletPoint():
+    def addSubCategoryField(e):
+        TODO
+        
+    def removeCategoryField(e):
+        TODO
+
+    def removeSubCategoryField(e):
+        TODO
+
+    def addBulletPointField(e):
         TODO
 
     #Text Fields
@@ -44,34 +87,28 @@ def main(page: ft.Page):
         )
 
     #Additional text fields & labels
-    linkRow = ft.Row(
+    addLinkRow = ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
-                linkFieldColumn,
                 ft.Text("Add/Remove link"),
                 ft.Button(content="+", on_click=addLinkField),
                 ft.Button(content="-", on_click=removeLinkField)
             ]
         )
-    categoryRow = ft.Row(
+    addCategoryRow = ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
                 ft.Text("Add category"),
-                ft.Button(content="+", on_click=addCategory)
+                ft.Button(content="+", on_click=addCategoryField),
+                ft.Button(content="-", on_click=removeCategoryField)
             ]
         )
-    subcategoryRow = ft.Row(
+    
+    addBulletPointRow = ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
                 ft.Text("Add category"),
-                ft.Button(content="+", on_click=addSubCategory)
-            ]
-        )
-    bulletPointRow = ft.Row(
-            alignment=ft.MainAxisAlignment.CENTER,
-            controls=[
-                ft.Text("Add category"),
-                ft.Button(content="+", on_click=addBulletPoint)
+                ft.Button(content="+", on_click=addBulletPointField)
             ]
         )
 
@@ -92,11 +129,25 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
                 initialFieldColumn,
-                
             ]
         ),
-        linkRow,
-        categoryRow,
+        ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                linkFieldColumn
+            ]
+        ),
+
+        addLinkRow,
+
+        ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                categoryFieldColumn
+            ]
+        ),
+
+        addCategoryRow,
         latexCompileRow
     )
 
